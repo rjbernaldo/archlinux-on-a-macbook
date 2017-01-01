@@ -1,7 +1,7 @@
 # ArchLinux on a MacBook
-A guide for installing Arch Linux on any******* MacBook using a usb drive.
+A guide for installing Arch Linux on any* MacBook using a usb drive.
 
-******* This has been tested on the following models:
+\* This has been tested on the following models:
 
 ### Prepare image
 
