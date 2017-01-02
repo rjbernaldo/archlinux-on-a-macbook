@@ -24,12 +24,7 @@ My personal guide for installing Arch Linux on a MacBook using a usb drive.
 ### Installation
 
 1. Boot into laptop while holding **alt**.
-2. Check if we are in EFI mode.
-
-    ```
-    $ efivar -l
-    ```
-
+2. Check if we are in EFI mode by typing `$ efivar -l`
 3. Partition drive into three.
 
     ```
@@ -66,7 +61,7 @@ My personal guide for installing Arch Linux on a MacBook using a usb drive.
     $ sudo vim /mnt/etc/fstab
     ```
 
-6. Configuration
+6. Configure locale
 
     ```
     $ arch-chroot /mnt
@@ -96,7 +91,7 @@ My personal guide for installing Arch Linux on a MacBook using a usb drive.
     $ vim /etc/hosts
     ```
 
-8. Temporary connection
+8. Establish temporary connection
 
     ```
     $ pacman -S dhcpcd
@@ -109,5 +104,80 @@ My personal guide for installing Arch Linux on a MacBook using a usb drive.
     $ passwd
     ```
 
+9. Configure bootloader (systemd-boot)
+
+    ```
+    $ pacman -S dosfstools
+    $ bootctl --path=/boot install # install systemd in /boot partition
+    $ vim /boot/loader/entries/arch.conf # create file below
+    # title Arch Linux
+    # linux /vmlinuz-linux
+    # initrd /initramfs-linux.img
+    # options root=/dev/sda2 rw elevator=deadline quiet splash resume=/dev/sda3 nmi_watchdog=0
+    $ echo "default arch" > /boot/loader/loader.conf
+    $ exit
+    $ reboot
+    ```
 
 ### Post Installation
+
+1. Create user
+
+    ```
+    $ groupadd users
+    $ useradd -m -g users -G wheel -s /bin/bash <username>
+    $ pacman -S sudo
+    $ vim /etc/sudoers # add at the end of the file
+    # %wheel ALL=(ALL) ALL
+    $ passwd <username> # set password for your user
+    $ passwd -l root # lock root account
+    $ reboot
+    ```
+
+2. Install yaourt (https://wiki.archlinux.org/index.php/yaourt)
+
+    ```
+    $ sudo vim /etc/pacman.conf # add at the end of the file
+    # [archlinuxfr]
+    # SigLevel = Never
+    # Server = http://repo.archlinux.fr/$arch
+    $ sudo pacman -Sy
+    $ sudo pacman -S yaourt
+    ```
+
+3. Install a Desktop Environment
+
+    ```
+    # Gnome
+
+    $ sudo pacman -S gnome
+    $ sudo systemctl enable gdm
+    ```
+
+4. Install display drivers
+
+    ```
+    # Gnome
+
+    $ sudo pacman -S xf86-video-intel
+    ```
+
+5. Install wifi
+
+    ```
+    $ sudo systemctl disable dhcpcd
+    $ sudo pacman -S networkmanager network-manager-applet
+    $ yaourt -S broadcom-wl
+    $ sudo reboot
+    ```
+
+### Post Installation
+
+1. Install wifi
+
+    ```
+    $ sudo systemctl disable dhcpcd
+    $ sudo pacman -S networkmanager network-manager-applet
+    $ yaourt -S broadcom-wl
+    $ sudo reboot
+    ```
